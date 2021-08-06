@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 
+import { IPost } from "./post.model";
+
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -16,10 +18,10 @@ export class AppComponent implements OnInit {
     this.fetchPosts();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: IPost) {
     // Send Http request
     this.http
-      .post(
+      .post<{ name: string }>(
         "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
         postData
       )
@@ -39,12 +41,12 @@ export class AppComponent implements OnInit {
 
   private fetchPosts() {
     this.http
-      .get(
+      .get<{ [key: string]: IPost }>(
         "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json"
       )
       .pipe(
         map((responseData) => {
-          const postsArray = [];
+          const postsArray: Array<IPost> = [];
 
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
