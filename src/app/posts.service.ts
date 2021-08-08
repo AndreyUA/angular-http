@@ -1,7 +1,12 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+} from "@angular/common/http";
 import { Subject, throwError } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { map, catchError, tap } from "rxjs/operators";
 
 import { IPost } from "./post.model";
 
@@ -19,7 +24,13 @@ export class PostsService {
     this.http
       .post<{ name: string }>(
         "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
-        postData
+        postData,
+        {
+          // Default value:
+          // observe: "body",
+          // Get full response:
+          observe: "response",
+        }
       )
       .subscribe(
         (responseData) => {
@@ -69,8 +80,22 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete(
-      "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json"
-    );
+    return this.http
+      .delete(
+        "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
+        {
+          observe: "events",
+        }
+      )
+      .pipe(
+        tap((event) => {
+          console.log(event);
+
+          if (event.type === HttpEventType.Sent) {
+            // If you need to inform user about sending request
+          }
+          if (event.type === HttpEventType.Response) console.log(event.body);
+        })
+      );
   }
 }
