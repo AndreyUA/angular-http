@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Subject, throwError } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 
@@ -34,7 +34,12 @@ export class PostsService {
   fetchPosts() {
     return this.http
       .get<{ [key: string]: IPost }>(
-        "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json"
+        "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
+        {
+          headers: new HttpHeaders({
+            "Custom-Header": "Hello",
+          })
+        }
       )
       .pipe(
         map((responseData) => {
