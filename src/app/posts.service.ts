@@ -24,30 +24,25 @@ export class PostsService {
   }
 
   fetchPosts() {
-    this.http
-    .get<{ [key: string]: IPost }>(
-      "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json"
-    )
-    .pipe(
-      map((responseData) => {
-        const postsArray: Array<IPost> = [];
+    return this.http
+      .get<{ [key: string]: IPost }>(
+        "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json"
+      )
+      .pipe(
+        map((responseData) => {
+          const postsArray: Array<IPost> = [];
 
-        for (const key in responseData) {
-          if (responseData.hasOwnProperty(key)) {
-            postsArray.push({
-              ...responseData[key],
-              id: key,
-            });
+          for (const key in responseData) {
+            if (responseData.hasOwnProperty(key)) {
+              postsArray.push({
+                ...responseData[key],
+                id: key,
+              });
+            }
           }
-        }
 
-        return postsArray;
-      })
-    )
-    .subscribe((posts) => {
-      console.log(posts);
-
-      
-    });
+          return postsArray;
+        })
+      );
   }
 }
