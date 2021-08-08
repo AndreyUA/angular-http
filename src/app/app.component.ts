@@ -1,6 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
 
 import { IPost } from "./post.model";
 import { PostsService } from "./posts.service";
@@ -13,16 +11,22 @@ import { PostsService } from "./posts.service";
 export class AppComponent implements OnInit {
   loadedPosts: Array<IPost> | [] = [];
   isFetching: boolean = false;
+  error = null;
 
-  constructor(private http: HttpClient, private postService: PostsService) {}
+  constructor(private postService: PostsService) {}
 
   ngOnInit() {
     this.isFetching = true;
 
-    this.postService.fetchPosts().subscribe((posts) => {
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    });
+    this.postService.fetchPosts().subscribe(
+      (posts) => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      },
+      (error) => {
+        this.error = error.message;
+      }
+    );
   }
 
   onCreatePost(postData: IPost) {
@@ -32,10 +36,15 @@ export class AppComponent implements OnInit {
   onFetchPosts() {
     this.isFetching = true;
 
-    this.postService.fetchPosts().subscribe((posts) => {
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    });
+    this.postService.fetchPosts().subscribe(
+      (posts) => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      },
+      (error) => {
+        this.error = error.message;
+      }
+    );
   }
 
   onClearPosts() {
