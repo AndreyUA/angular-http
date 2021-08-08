@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Subject, throwError } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 
@@ -32,13 +32,19 @@ export class PostsService {
   }
 
   fetchPosts() {
+    // If you want to add many query params
+    // You should use this:
+    // let searchParams = new HttpParams();
+    // searchParams = searchParams.append('another-custom-param', "test");
+
     return this.http
       .get<{ [key: string]: IPost }>(
         "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
         {
           headers: new HttpHeaders({
             "Custom-Header": "Hello",
-          })
+          }),
+          params: new HttpParams().set("print", "pretty"),
         }
       )
       .pipe(
