@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { IPost } from "./post.model";
@@ -8,6 +9,8 @@ import { IPost } from "./post.model";
   providedIn: "root",
 })
 export class PostsService {
+  error = new Subject<string>();
+
   constructor(private http: HttpClient) {}
 
   createAndStorePost(title: string, content: string) {
@@ -18,9 +21,14 @@ export class PostsService {
         "https://angular-http-bafe2-default-rtdb.europe-west1.firebasedatabase.app/posts.json",
         postData
       )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+      .subscribe(
+        (responseData) => {
+          console.log(responseData);
+        },
+        (error) => {
+          this.error.next(error.message);
+        }
+      );
   }
 
   fetchPosts() {
